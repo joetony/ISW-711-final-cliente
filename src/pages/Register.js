@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { getCountriesList } from '../services/CountryService';
 import { createUser } from '../services/userService';
+import { Navigate  } from 'react-router';
+import { register } from '../services/authService';
+
 
 class Register extends Component {
 
@@ -16,7 +19,7 @@ class Register extends Component {
             city: '',
             zip_code: '',
             number:'',
-            role_id:'64193d458e0f2d002b694e33',//role id for egular
+            role_id:'64193d458e0f2d002b694e33',//role id for regular
 
         }
        
@@ -51,17 +54,17 @@ class Register extends Component {
         this.state.form.zip_code = e.target.zip_code.value;
         this.state.form.number = e.target.number.value;
 
-        console.log("this.state.form.role_id");
-        console.log(this.state.form.role_id);
+        console.log("this.state.form");
+        console.log(this.state.form);
 
-        const form = await createUser(this.state.form);
-    
+        //const form = await createUser(this.state.form);
+        const form = await register(this.state.form);
+        console.log(form.data);
         if (!form.error) {
             
-            this.setState({ isLoading: false });
-            alert("Se ha registrado correctamente");
-            window.location.href = "/";
-
+            
+            alert("Se ha enviado un correo para la verificación de la cuenta.");
+            window.location.href = "/";//return to login screen
         }
        
     
@@ -154,7 +157,7 @@ class Register extends Component {
                                                 //onChange={this.handleChange} 
                                                 name="country"
                                                 id="country">
-                                                <option>Ninguna</option>
+                                                <option key="none" value="">Ninguna</option>
                                                 {
                                                     countries.map(country => <option key={country._id} value={country._id}>{country.name}</option>)
                                                 }

@@ -4,6 +4,8 @@ import { getCategories, createCategory, deleteCategory, updateCategory } from '.
 import './modal.css';
 import { getRole } from '../services/roleService';
 import { getSession } from '../services/sessionService';
+import NavBar from '../components/NavBar';
+import { isAdmin,  } from '../utils/auth';
 
 
 
@@ -19,27 +21,26 @@ class Categories extends Component {
 
     componentDidMount() {
         this.gettingSession();
-      
-        
-       
-       
+
+
+
+
         this.gettingCategories();
 
         const myDiv = document.getElementById("modal");
         myDiv.style.display = "none";
     }
-    
+
     gettingSession = async () => {
-        this.setState({ isLoading: true });
-        const user=await getSession();
-        
-        await getRole(user.data.role._id);
-        
-        this.setState({ isLoading: false });
+        const isAuthenticated = isAdmin();
+        if(!isAuthenticated){
+            window.location.href = "/";//return to login screen
+
+        }
     }
 
 
-  
+
     //Obtiene las categorías
 
     gettingCategories = async () => {
@@ -62,7 +63,7 @@ class Categories extends Component {
             await this.gettingCategories();
             alert("Category has been added sucessfully!");
             this.setState({ isLoading: false });
-           
+
         }
     }
 
@@ -85,7 +86,7 @@ class Categories extends Component {
         this.state.form.name = e.target.edit_name.value;
         console.log("this.state.form:");
         console.log(this.state.form);
-        
+
         const { error } = await updateCategory(this.state.form);
         if (!error) {
             await this.gettingCategories();
@@ -103,55 +104,87 @@ class Categories extends Component {
     handleOpenModal = (category, e) => {
         this.handleModal();
         var categoryName = document.getElementById("edit_name");
-        categoryName.value=category.name;
-        this.state.form._id=category._id;      
+        categoryName.value = category.name;
+        this.state.form._id = category._id;
     }
+    /*<Modal isOpen={this.props.openModal}>
+  <ModalHeader style={{ display: 'block' }}>
+    <span style={{ float: 'right', cursor: 'pointer' }} onClick={() => this.handleCloseModal()}>
+      &times;
+    </span>
+  </ModalHeader>
+  <ModalBody>
+    <form onSubmit={this.patchCategories}>
+      <div className="mb-4">
+        <label htmlFor="edit_name" className="block text-gray-700 font-bold mb-2">
+          Category Name
+        </label>
+        <input
+          type="text"
+          id="edit_name"
+          name="edit_name"
+          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          required
+        />
+      </div>
+    </form>
+  </ModalBody>
+  <ModalFooter>
+    <button className="btn btn-success" onClick={() => this.handleCloseModal()}>
+      Save
+    </button>
+    <button className="btn btn-danger" onClick={() => this.handleCloseModal()}>
+      Cancel
+    </button>
+  </ModalFooter>
+</Modal>*/
 
     render() {
 
         return (
             <div className="flex w-full h-screen">
 
+                <NavBar />
                 <div id="modal" className="modal">
                     <div className="modal-content">
-                    <span className="close" onClick={this.handleModal}>&times;</span>
-                    <div>
+                        <span className="close" onClick={this.handleModal}>&times;</span>
+                        <div>
 
-                        <form onSubmit={this.patchCategories}>
-                            <div className="mb-4">
-                                <label htmlFor="edit_name" className="block text-gray-700 font-bold mb-2">
-                                    Category Name
-                                </label>
-                                <input
-                                    type="text"
-                                    id="edit_name"
-                                    name="edit_name"
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                    Save
-                                </button>
-                            </div>
-                        </form>
-                        
-                    
-                    </div>
+                            <form onSubmit={this.patchCategories}>
+                                <div className="mb-4">
+                                    <label htmlFor="edit_name" className="block text-gray-700 font-bold mb-2">
+                                        Category Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="edit_name"
+                                        name="edit_name"
+                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        required
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        Save-
+                                    </button>
+                                </div>
+                            </form>
 
-                   
 
-                </div></div>
+                        </div>
+
+
+
+                    </div></div>
 
                 <div>
-                        <button className='border border-gray-400  px-4 py-2 text-center' style={{ float: "right" }} onClick={() => window.location.assign("/")}>
-                            Log out
-                        </button>
-                    </div>
+                    <button className='border border-gray-400  px-4 py-2 text-center' style={{ float: "right" }} onClick={() => window.location.assign("/")}>
+                        Log out
+                    </button>
+                </div>
 
                 <div className='content-between bg-white px-10 py-20 rounded-3xl border-2 border-gray-100'>
-                    
+
                     <h3 className='text-gray-500 mt-4 text-5xl font-semibold text-center'>Please add new category</h3>
                     <div className='mt-8'>
                         <form onSubmit={this.postCategories} method="POST" >
@@ -171,13 +204,13 @@ class Categories extends Component {
                     </div>
                 </div>
                 <div className="flex flex-auto">
-                    
+
                     <div className='flex flex-auto content-between bg-white px-10 py-20 rounded-3xl border-2 border-gray-100 '>
-                    
+
                         <h2 className='text-gray-500 mt-4 text-5xl font-semibold text-center'>Categories</h2>
-                        
+
                         <div className='mt-12'>
-                       
+
                             <div className="mt-12">
                                 <table className="mt-8 text-gray-500 font-semibold">
                                     <thead>

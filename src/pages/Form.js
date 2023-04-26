@@ -5,6 +5,12 @@ import { getRole } from '../services/roleService';
 import { getSession } from '../services/sessionService';
 
 
+import VerifyPhoneCodeModal from "../components/VerifyPhoneCodeModal";
+
+import { login2FA,passwordLess } from "../services/authService";
+
+
+
 class Form extends Component {
 
 
@@ -12,13 +18,15 @@ class Form extends Component {
         form: {
             email: '',
             password: '',
+            
         
-        }
+        },
+        openModal: false
     }
     componentDidMount() {
 
         localStorage.removeItem('token');
-        localStorage.removeItem('expiration');
+        //localStorage.removeItem('expiration');
        
     }
 
@@ -29,15 +37,23 @@ class Form extends Component {
     this.setState({ isLoading: true });
     this.state.form.email = e.target.email.value;
     this.state.form.password = e.target.password.value;
-
-    const form = await getUser(this.state.form);
+    console.log("this.state.form");
+    console.log(this.state.form);
+    //const form = await getUser(this.state.form);
+    const form = await login2FA(this.state.form);
+    
+    console.log("form");
+    console.log(form);
+    
     //const form = await saveSession(this.state.form);
     if (!form.error) {
+        
         console.log("user found");
         console.log(form.data);
+        this.setState({ openModal: true })
 
         
-       
+       /*
         const session=await saveSession(form.data);
 
         console.log("session.data");
@@ -50,15 +66,34 @@ class Form extends Component {
 
         }else{
             console.log("session not returned");
-        }
+        }*/
 
         
         //window.location.reload();
+    }else{
+        console.log("user not found");
+        alert("Username or password incorrect, please try again!");
+     
     }
    
 
     //verifyRegister(Email, Password)
 }
+
+passwordLessAccess= async () => {
+    const email = document.getElementById("email").value;
+
+    if(email===''){
+        alert("Debe ingresar un correo electrónico!")
+
+    }else{
+        const form = await passwordLess(email);
+        console.log("form");
+        console.log(form);}
+
+    
+}
+
 
 gettingSession = async () => {
     this.setState({ isLoading: true });
@@ -70,7 +105,9 @@ gettingSession = async () => {
 }
 
 
-
+handleCloseModal = () => {
+    this.setState({ openModal: false });
+}
 
 
 
@@ -114,6 +151,14 @@ render(){
                                     </button>
                                 </div>
                             <hr className="mb-6 border-t" />
+                            <div className="mb-6 text-center">
+                                    <button
+                                        className="w-full px-4 py-2 font-bold text-white bg-violet-500 rounded-full hover:bg-violet-600 focus:outline-none focus:shadow-outline"
+                                        type="button" onClick={this.passwordLessAccess}
+                                    >
+                                        Passwordless access!
+                                    </button>
+                                </div>
                             <div className="text-center">
                                 <a
                                     className="inline-block text-sm text-violet-500 align-baseline hover:text-violet-600"
@@ -126,6 +171,7 @@ render(){
                     </div>
                 </div>
             </div>
+            <VerifyPhoneCodeModal openModal={this.state.openModal} handleCloseModal={this.handleCloseModal} email={this.state.email} />
         </div>
     )
 }
