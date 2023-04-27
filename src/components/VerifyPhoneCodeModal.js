@@ -17,33 +17,33 @@ class VerifyPhoneCodeModal extends Component {
         error: { show: false, msg: '' },
     }
 
-    
+
 
     handleCloseModal = () => {
         this.props.handleCloseModal();
     }
 
     handleVerifyCode = async () => {
-       
-        this.state.form.email=document.getElementById("email").value;
-        this.state.form.phoneCode=document.getElementById("code").value;
-       
+
+        this.state.form.email = document.getElementById("email").value;
+        this.state.form.phoneCode = document.getElementById("code").value;
+
         if (this.state.form.phoneCode !== '') {
-           
-        const form = await verifyPhoneCode(this.state.form);
 
-        if (!form.error) {
-            console.log("form.data.token");
-            console.log(form.data.token);
-           localStorage.setItem('token', form.data.token);
-            // Redirigirlo al index
-            window.location.href = "/index";//return index website
-            //history.push('/news');
+            const form = await verifyPhoneCode(this.state.form);
 
+            if (!form.error) {
+                console.log("form.data.token");
+                console.log(form.data.token);
+                localStorage.setItem('token', form.data.token);
+                // Redirigirlo al index
+                window.location.href = "/index";//return index website
+                //history.push('/news');
+
+            } else {
+                alert("El código ingresado en incorrecto, vuelve a intentarlo.")
+            }
         } else {
-            alert("El código ingresado en incorrecto, vuelve a intentarlo.")
-        }
-        }else{
             alert("Debe ingresar un valor!")
         }
 
@@ -63,7 +63,7 @@ class VerifyPhoneCodeModal extends Component {
                 <ModalBody>
                     <div className="form-group">
                         <label htmlFor="name">Ingrese su código</label>
-                        <input className="form-control"  id="code"   />
+                        <input className="form-control" id="code" />
                     </div>
                     {this.state.error.show && (
                         <div className="alert alert-danger my-3" role="alert">
@@ -85,4 +85,4 @@ class VerifyPhoneCodeModal extends Component {
 }
 
 
-export default  VerifyPhoneCodeModal;
+export default VerifyPhoneCodeModal;
