@@ -1,18 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import WebRoutes from './routes/WebRoutes';
-
-
-
-//Import Boostrap
-
+import App from './app';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+const urlParams = new URLSearchParams(window.location.search);
+const token = urlParams.get('token');
+
+if (token) {
+  localStorage.setItem('token', token);
+  window.location.href = `http://localhost:3000/`;
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <WebRoutes />
+    <App />
   </React.StrictMode>
 );
 

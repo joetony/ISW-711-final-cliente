@@ -1,26 +1,55 @@
-import Form from "./pages/Form";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import AuthContextProvider from "./utils/authContext";
+import Login from './pages/Form';
+import Index from './pages/Index';
+import Categories from './pages/Categories';
+import Source from './pages/NewSource';
+import News from './pages/News';
+import Register from './pages/Register';
+import PrivateRoute from './routes/PrivateRoute';
+import PublicRoute from './routes/PublicRoute';
 
-import Categories from "./pages/Categories";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import NewSource from "./pages/NewSource";
-import Register from "./pages/Register";
-import News from "./pages/News";
+function app() {
+    return (
+        <AuthContextProvider>
+            <div className="app">
+                <Router>
+                    <Routes>
+                        <Route path="/" element={<PublicRoute />}>
+                            <Route index element={<Login />} />
+                        </Route>
+                        <Route path="/register" element={<PublicRoute />}>
+                            <Route index element={<Register />} />
 
-function App() {
-  return (
+                        </Route>
+                        <Route path="/index" element={<PrivateRoute />}>
+                            <Route index element={<Index />} />
 
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Form />} />
-          <Route path="/news" element={<News />} />
-          <Route path="/categories" element={<Categories />} />
-          <Route path="/newsource" element={<NewSource />} />
-          <Route path="/register" element={<Register />} />
-          
-        </Routes>
-      </BrowserRouter>
+                        </Route>
+                        <Route path="/categories" element={<PrivateRoute />}>
+                            <Route index element={<Categories />} />
+
+                        </Route>
+                        <Route path="/sources" element={<PrivateRoute />}>
+                            <Route index element={<Source />} />
+
+                        </Route>
+
+                        <Route path="/news" element={<PrivateRoute />}>
+                            <Route index element={<News />} />
+
+                        </Route>
 
 
-  );
+                    </Routes>
+
+                </Router>
+            </div>
+        </AuthContextProvider>
+
+
+    );
 }
-export default App;
+
+export default app;

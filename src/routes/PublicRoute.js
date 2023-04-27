@@ -1,7 +1,22 @@
 import React from 'react';
-import { Navigate, Route } from 'react-router-dom';
+import { Navigate, Route,Outlet } from 'react-router-dom';
 import { isAdmin } from '../utils/auth';
-import { Index, Login } from './Paths'; 
+import { Index, Login } from './Paths';
+import { useAuthContext } from '../utils/authContext'; 
+
+export default function PublicRoute() {
+  const {isAuthenticated} = useAuthContext();
+
+  if (isAuthenticated) {
+    return <Navigate to={Index}/>;
+  }
+
+  return (
+    <div>
+      <Outlet />
+    </div>
+  );
+}
 /*
 export default function PublicRoute({ path, ...rest }) {
   const { isAuthenticated } = isLogin();
@@ -10,7 +25,7 @@ export default function PublicRoute({ path, ...rest }) {
     <Route {...rest} path={path} element={isAuthenticated ? <Navigate to={Index} /> : <Navigate to={Login} />} />
   );
 }*/
-
+/*
 export default function PublicRoute({ component: Component, ...rest }) {
   const isAuthenticated = isAdmin();
   return (
@@ -19,4 +34,4 @@ export default function PublicRoute({ component: Component, ...rest }) {
       element={!isAuthenticated ? <Component /> : <Navigate to={Index} />}
     />
   );
-}
+}*/

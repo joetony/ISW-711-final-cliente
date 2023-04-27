@@ -1,15 +1,26 @@
 import React from 'react';
-import { Navigate,Route } from 'react-router-dom';
+import { Navigate,Route,Outlet } from 'react-router-dom';
 import { isAdmin, isLogin } from '../utils/auth';
 import { Index,Login,Categories } from './Paths';
+import { useAuthContext } from '../utils/authContext';
 
-export default function PrivateRoute({ component: Component, ...rest }) {
-  const { isAuthenticated } = isAdmin();
- 
+
+export default function PrivateRoute() {
+  const {isAuthenticated,isAdmin} = useAuthContext();
+  
+  if (!isAuthenticated) {
+    
+      return <Navigate to={Login} />;
+   
+   
+  }
+  if(isAdmin){
+    return <Navigate to={Categories} />;
+  }
+  
   return (
-    <Route
-      {...rest}
-      element={isAuthenticated ? <Component /> : <Navigate to={Login} />}
-    />
+    <div>
+      <Outlet />
+    </div>
   );
 }
