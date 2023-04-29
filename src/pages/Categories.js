@@ -5,7 +5,6 @@ import './modal.css';
 import { getRole } from '../services/roleService';
 import { getSession } from '../services/sessionService';
 import NavBar from '../components/NavBar';
-import { isAdmin,  } from '../utils/auth';
 
 
 
@@ -20,7 +19,7 @@ class Categories extends Component {
     }
 
     componentDidMount() {
-        this.gettingSession();
+       // this.gettingSession();
 
 
 
@@ -30,14 +29,14 @@ class Categories extends Component {
         const myDiv = document.getElementById("modal");
         myDiv.style.display = "none";
     }
-
+/*
     gettingSession = async () => {
         const isAuthenticated = isAdmin();
         if(!isAuthenticated){
             window.location.href = "/";//return to login screen
 
         }
-    }
+    }*/
 
 
 
