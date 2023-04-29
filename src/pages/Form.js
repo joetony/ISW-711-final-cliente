@@ -25,18 +25,22 @@ class Form extends Component {
         this.state.form.email = e.target.email.value;
         this.state.form.password = e.target.password.value;
 
-        const form = await login2FA(this.state.form);
-
-        if (!form.error) {
-
-            console.log("user found");
-            console.log(form.data);
-            this.setState({ openModal: true })
-
+        if (this.state.form.email === '' || this.state.form.password === '') {
+            alert("Username or password empty, please try again!");
         } else {
-            console.log("user not found");
-            alert("Username or password incorrect, please try again!");
+            const form = await login2FA(this.state.form);
 
+            if (!form.error) {
+
+                console.log("user found");
+                console.log(form.data);
+                this.setState({ openModal: true })
+
+            } else {
+                console.log("user not found");
+                alert("Username or password incorrect, please try again!");
+
+            }
         }
     }
 
