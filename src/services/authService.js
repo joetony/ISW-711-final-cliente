@@ -22,7 +22,7 @@ export const login2FA = async (data) => {
 export const verifyPhoneCode = async (data) => {
     try {
         const result = await axios.post(`${URL}auth/verifyPhoneCode`, data, { headers: { 'Content-Type': 'application/json' } });
-        if (result.status === 200) {
+        if (result.status === 201) {
             return { error: false, data: { token: result.data.token }, msg: result.data.msg };
         }
         return { error: true, data: null, msg: 'Error interno del servidor' };

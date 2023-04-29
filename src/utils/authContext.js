@@ -19,6 +19,7 @@ export default function AuthContextProvider({ children }) {
       const user = jwt_decode(token);
       if (user.role.name === 'admin') {
         setIsAdmin(true);
+        
       }
       setIsAuthenticated(true);
     } 
@@ -44,7 +45,8 @@ export default function AuthContextProvider({ children }) {
       logout,
       isAuthenticated,
       isAdmin,
-      token
+      token,
+      
     }),
     [token, isAuthenticated, isAdmin, login, logout]
   );

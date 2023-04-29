@@ -7,7 +7,8 @@ import NavBar from '../components/NavBar';
 import { getCategories } from '../services/categoryService';
 import { getNewsByUser, getSearchNews } from '../services/newsService';
 import { getTags } from '../services/tagService';
-import { decodeToken } from '../utils/auth';
+import { decodeToken } from '../utils/decodeToken';
+
 
 class Index extends Component {
 
@@ -38,8 +39,10 @@ class Index extends Component {
 
     gettingNews = async () => {
         this.setState({ isLoading: true });
-        const user = decodeToken();
-        const { data, error } = await getNewsByUser(user._id);
+     
+        
+       
+        const { data, error } = await getNewsByUser(decodeToken()._id);
         if (!error) {
             this.setState({ notices: data })
         }
@@ -66,9 +69,13 @@ class Index extends Component {
         }
 
         const tagsIds = this.state.tagsSelected.map(t => t._id);
-        const user = decodeToken();
+        //const user = decodeToken();
+
+       
+   
+
         const { data, error } = await getSearchNews(
-            user._id,
+            decodeToken()._id,
             value !== '' ? value : undefined,
             category,
             tagsIds.length !== 0 ? tagsIds : undefined
@@ -82,10 +89,12 @@ class Index extends Component {
     filterByCategory = async (category) => {
         this.setState({ isLoading: true });
         this.setState({ selectedCat: category })
-        const user = decodeToken();
+       
+
+        
         const tagsIds = this.state.tagsSelected.map(t => t._id);
         const { data, error } = await getSearchNews(
-            user._id,
+            decodeToken()._id,
             this.state.search !== '' ? this.state.search : undefined,
             category !== 'all' ? category._id : undefined,
             tagsIds.length !== 0 ? tagsIds : undefined
@@ -117,11 +126,10 @@ class Index extends Component {
             }
 
             this.setState({ tagsSelected: tags });
-            const user = decodeToken();
 
             const tagsIds = tags.map(t => t._id);
             const { data, error } = await getSearchNews(
-                user._id,
+                decodeToken()._id,
                 this.state.search !== '' ? this.state.search : undefined,
                 category,
                 tagsIds.length !== 0 ? tagsIds : undefined

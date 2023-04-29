@@ -1,6 +1,5 @@
 import React from 'react';
 import { Navigate, Route,Outlet } from 'react-router-dom';
-import { isAdmin } from '../utils/auth';
 import { Index, Login } from './Paths';
 import { useAuthContext } from '../utils/authContext'; 
 

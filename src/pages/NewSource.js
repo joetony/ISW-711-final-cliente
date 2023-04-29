@@ -5,8 +5,9 @@ import { Modal, ModalBody, ModalFooter } from 'reactstrap';
 import NavbarCover from '../components/NavBar';
 import { getCategories } from '../services/categoryService';
 import { createSource, deleteSource, getSources, updateSource } from '../services/newSourceService';
-import { decodeToken } from '../utils/auth';
+import { decodeToken } from '../utils/decodeToken';
 //import Loading from '../components/Loading';
+
 
 class NewSource extends Component {
 
@@ -93,8 +94,10 @@ class NewSource extends Component {
 	postSource = async (e) => {
 		e.preventDefault();
 		//this.setState({ isLoading: true });
-		const user = decodeToken();
-		const { error } = await createSource({ ...this.state.form, user_id: user._id });
+		
+        
+		
+		const { error } = await createSource({ ...this.state.form, user_id: decodeToken()._id });
 		if (!error) {
 			await this.gettingSources();
 			this.handleCloseAddEditModal();
