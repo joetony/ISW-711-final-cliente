@@ -37,6 +37,7 @@ export default function AuthContextProvider({ children }) {
 
     window.localStorage.removeItem(Token);
     setIsAuthenticated(false);
+    window.location.href = "/";
   }, []);
 
   const value = useMemo(

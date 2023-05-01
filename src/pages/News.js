@@ -29,9 +29,22 @@ class News extends React.Component {
        
         this.gettingNews();
         this.gettingCategories();
-
+        this.gettingSession();
 
     }
+
+    gettingSession = async () => {
+        try{const user = await decodeToken();
+            if(user===null){window.location.href = "/";//return to login screen
+                
+        }
+        }catch{
+            window.location.href = "/";//return to login screen
+
+        }
+
+    }
+    
     
 
 

@@ -7,6 +7,8 @@ import { getCategories } from '../services/categoryService';
 import { createSource, deleteSource, getSources, updateSource } from '../services/newSourceService';
 import { decodeToken } from '../utils/decodeToken';
 //import Loading from '../components/Loading';
+import NavBar from '../components/NavBar';
+
 
 
 import './modal.css';
@@ -35,11 +37,24 @@ class NewSource extends Component {
         
         this.gettingCategories();
         this.gettingSources();
+        this.gettingSession();
 
         const myDiv = document.getElementById("modal");
         myDiv.style.display = "none";
     }
    
+    gettingSession = async () => {
+        try{const user = await decodeToken();
+            if(user===null){window.location.href = "/";//return to login screen
+                
+        }
+        }catch{
+            window.location.href = "/";//return to login screen
+
+        }
+
+    }
+    
 
     //Obtiene las categorías
 
@@ -150,6 +165,7 @@ class NewSource extends Component {
 
         return (
             <div className="flex w-full h-screen">
+                 <NavBar />
 
                 <div id="modal" className="modal">
                     <div className="modal-content">
@@ -247,16 +263,7 @@ class NewSource extends Component {
                     <div className='flex flex-auto content-between bg-white px-10 py-20 rounded-3xl border-2 border-gray-100 '>
                         
                         <h2 className='text-gray-500 mt-4 text-5xl font-semibold text-center'>Sources</h2>
-                        <div>
-                        <button className='border border-gray-400  px-4 py-2 text-center' style={{ float: "right" }} onClick={() => window.location.assign("/")}>
-                            Log out
-                        </button>
-                    </div>
-                    <div style={{ display: "block" }}>
-                        <button className='border border-gray-400  px-4 py-2 text-center' style={{ float: "right" }} onClick={() => window.location.assign("/news")}>
-                            News
-                        </button>
-                        </div>
+                       
 
                         <div className='mt-12'>
                             <div className="mt-12">

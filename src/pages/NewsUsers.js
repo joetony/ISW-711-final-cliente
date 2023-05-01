@@ -3,6 +3,7 @@ import "../css/NewUsers.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from 'axios';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import { decodeToken } from '../utils/decodeToken';
 
 const url = "http://localhost:3000/api/users";
 
@@ -29,6 +30,26 @@ class NewsUsers extends Component {
       //modalType: ''
     }
   }
+
+  componentDidMount() {
+        
+  
+    this.gettingSession();
+
+    
+}
+
+  gettingSession = async () => {
+    try{const user = await decodeToken();
+      if(user===null){window.location.href = "/";//return to login screen
+                
+    }
+    }catch{
+        window.location.href = "/";//return to login screen
+
+    }
+
+}
 
   handleChange=async e=>{
     e.persist();

@@ -82,8 +82,11 @@ export const getSearchNews = async (userId, search, categoryId, tags) => {
     try {
         console.log("userId");
         console.log(userId);
+        console.log("search");
         console.log(search);
+        console.log("categoryId");
         console.log(categoryId);
+        console.log("tags");
         console.log(tags);
         const { data } = await client.query({
             query: queryGetSearchNews,
@@ -94,8 +97,7 @@ export const getSearchNews = async (userId, search, categoryId, tags) => {
                 tags: tags
             },
         });
-        console.log("data.getSearchNews");
-        console.log(data.getSearchNews);
+        
         if (data && data.getSearchNews) {
             return { error: false, data: data.getSearchNews, msg: '' };
         }

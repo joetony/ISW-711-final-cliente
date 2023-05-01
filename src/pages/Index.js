@@ -26,7 +26,20 @@ class Index extends Component {
         this.gettingCategories();
         this.gettingTags();
         this.gettingNews();
+        this.gettingSession();
+
     }
+    gettingSession = async () => {
+        try{const user = await decodeToken();
+           if(user===null){window.location.href = "/";//return to login screen
+        }
+        }catch{
+            window.location.href = "/";//return to login screen
+    
+        }
+    
+    }
+    
 
     gettingCategories = async () => {
         this.setState({ isLoading: true });
@@ -96,10 +109,9 @@ class Index extends Component {
 
     filterByCategory = async (category) => {
         this.setState({ isLoading: true });
-        this.setState({ selectedCat: category })
+        this.setState({ selectedCat: category._id })
        
-
-        
+       
         const tagsIds = this.state.tagsSelected.map(t => t._id);
         const { data, error } = await getSearchNews(
             decodeToken()._id,

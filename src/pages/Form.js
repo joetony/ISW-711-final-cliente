@@ -3,6 +3,7 @@ import { getRole } from '../services/roleService';
 import { getSession } from '../services/sessionService';
 import VerifyPhoneCodeModal from "../components/VerifyPhoneCodeModal";
 import { login2FA, passwordLess } from "../services/authService";
+import { decodeToken } from '../utils/decodeToken';
 
 
 class Form extends Component {
@@ -15,6 +16,11 @@ class Form extends Component {
 
         },
         openModal: false
+    }
+
+    componentDidMount() {
+        this.gettingSession();
+        
     }
 
 
@@ -64,12 +70,16 @@ class Form extends Component {
 
 
     gettingSession = async () => {
-        this.setState({ isLoading: true });
-        const user = await getSession();
+        try{const user = await decodeToken();
+            if(user){
+                window.location.href = "/index";//return to login screen
+            }
+        }catch{
 
-        await getRole(user.data.role._id);
+        }
+        
 
-        this.setState({ isLoading: false });
+       
     }
 
 

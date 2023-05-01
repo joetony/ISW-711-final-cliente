@@ -57,9 +57,12 @@ export const deleteCategory = async (category) => {
 }
 
 export const updateCategory = async (category) => {
+    
+    console.log("category");
+    console.log(category);
    
     try {
-        const result = await axios.patch(`${URL}category?id=${category._id}`, category, { headers: { 'Content-Type': 'application/json' } });
+        const result = await axios.patch(`${URL}category`, category, { headers: { 'Content-Type': 'application/json' } });
         if (result.status === 200) {
             return { error: false, category: result.category, msg: 'Elemento guardado' };
         }

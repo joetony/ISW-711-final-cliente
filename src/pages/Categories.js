@@ -5,6 +5,7 @@ import './modal.css';
 import { getRole } from '../services/roleService';
 import { getSession } from '../services/sessionService';
 import NavBar from '../components/NavBar';
+import { decodeToken } from '../utils/decodeToken';
 
 
 
@@ -23,20 +24,34 @@ class Categories extends Component {
 
 
 
-
+       this.gettingSession();
         this.gettingCategories();
 
         const myDiv = document.getElementById("modal");
         myDiv.style.display = "none";
     }
-/*
+
     gettingSession = async () => {
-        const isAuthenticated = isAdmin();
-        if(!isAuthenticated){
+        try{const user = await decodeToken();
+            console.log(user.role.name);
+            if(user.role.name==="regular"){
+                window.location.href = "/";
+
+            }
+
+                   if(user===null){window.location.href = "/";//return to login screen
+                
+            }
+        }catch{
             window.location.href = "/";//return to login screen
 
         }
-    }*/
+        
+
+       
+    }
+    
+
 
 
 
@@ -176,11 +191,7 @@ class Categories extends Component {
 
                     </div></div>
 
-                <div>
-                    <button className='border border-gray-400  px-4 py-2 text-center' style={{ float: "right" }} onClick={() => window.location.assign("/")}>
-                        Log out
-                    </button>
-                </div>
+               
 
                 <div className='content-between bg-white px-10 py-20 rounded-3xl border-2 border-gray-100'>
 
