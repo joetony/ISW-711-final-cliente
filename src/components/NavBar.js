@@ -12,16 +12,16 @@ function NavBar() {
       <Link className="navbar-brand" to="/index">My Cover</Link>
   
 
-    <div class="container">
+    <div className="container">
    
-   <div class="row">
+   <div className="row">
      
      
-     <div class="col-sm">
-       <button type="button" class="btn btn-primary"><Link className="nav-link" to="/sources">Recursos</Link></button>
+     <div className="col-sm">
+       <button type="button" className="btn btn-primary"><Link className="nav-link" to="/sources">Recursos</Link></button>
      </div>
      {isAdmin && (
-      <div class="col-sm">
+      <div className="col-sm">
       <button type="button" className="btn btn-primary"> <Link className="nav-link" to="/categories">Categorías</Link></button>
     </div>
           
@@ -29,7 +29,7 @@ function NavBar() {
           
           )}
      
-     <div class="col-sm">
+     <div className="col-sm">
        <button type="button" className="btn btn-primary"  onClick={logout}>Cerrar Sesión</button>
      </div>
    </div>
