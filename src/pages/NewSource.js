@@ -9,201 +9,297 @@ import { decodeToken } from '../utils/decodeToken';
 //import Loading from '../components/Loading';
 
 
+import './modal.css';
+import { getRole } from '../services/roleService';
+import { getSession } from '../services/sessionService';
+
+
+
 class NewSource extends Component {
 
-	state = {
-		categories: [],
-		data: [],
-		addEditModal: false,
-		modalDelate: false,
-		isLoading: false,
-		sourceSelected: null,
-		form: {
-			name: '',
-			url: '',
-			category_id: '',
-			user_id: ''
-		}
-	}
 
-	componentDidMount() {
-		this.gettingCategories();
-		this.gettingSources();
-	}
+    state = {
+        categories: [],
+        data: [],
+        form: {
+            name: '',
+            url: '',
+            category_id: '',
+            user_id: ''
 
-	gettingCategories = async () => {
-		//this.setState({ isLoading: true });
-		const { data, error } = await getCategories();
-		if (!error) {
-			this.setState({ categories: data })
-		}
-		//this.setState({ isLoading: false });
-	}
+        }
+    }
 
-	gettingSources = async () => {
-		//this.setState({ isLoading: true });
-		const { data, error } = await getSources();
-		if (!error) {
-			this.setState({ data })
-		}
-		//this.setState({ isLoading: false });
-	}
 
-	handleCloseAddEditModal = () => {
-		this.setState({
-			addEditModal: false, sourceSelected: null,
-			form: {
-				name: '',
-				url: '',
-				category_id: '',
-				user_id: ''
-			}
-		});
-	}
-
-	handleOpenAddEditModal = (source) => {
-		if (source) {
-			this.setState({ addEditModal: true, sourceSelected: source, form: { ...source, category_id: source.category._id, user_id: source.user._id } });
-		} else {
-			this.setState({ addEditModal: true, sourceSelected: null });
-		}
-	}
-
-	handleOpenDelete = (source) => {
-		this.setState({ modalDelate: true, sourceSelected: source });
-	}
-
-	handleCloseDelete = () => {
-		this.setState({ modalDelate: false, sourceSelected: null });
-	}
-
-	handleDelete = async () => {
-		//this.setState({ isLoading: true });
-		const { error } = await deleteSource(this.state.sourceSelected);
-		if (!error) {
-			await this.gettingSources();
-			this.handleCloseDelete();
-		}
-		//this.setState({ isLoading: false });
-	}
-
-	handleChange = (e) => {
-		this.setState({ form: { ...this.state.form, [e.target.name]: e.target.value, } })
-	}
-
-	postSource = async (e) => {
-		e.preventDefault();
-		//this.setState({ isLoading: true });
-		
+    componentDidMount() {
         
-		
-		const { error } = await createSource({ ...this.state.form, user_id: decodeToken()._id });
-		if (!error) {
-			await this.gettingSources();
-			this.handleCloseAddEditModal();
-		}
-		//this.setState({ isLoading: false });
-	}
+        this.gettingCategories();
+        this.gettingSources();
 
-	putSource = async (e) => {
-		e.preventDefault();
-		const { error } = await updateSource(this.state.form);
-		if (!error) {
-			await this.gettingSources();
-			this.handleCloseAddEditModal();
-		}
-		//this.setState({ isLoading: false });
-	}
+        const myDiv = document.getElementById("modal");
+        myDiv.style.display = "none";
+    }
+   
 
-	render() {
-		const { isLoading, sourceSelected, form, categories } = this.state;
+    //Obtiene las categorías
 
-		return (
-			<div className="App">
-				<NavbarCover />
-				<button className="btn btn-success my-5" onClick={() => this.handleOpenAddEditModal()}>Agregar Recurso</button>
-
-				{
-					
-						<table className="table ">
-							<thead>
-								<tr>
-									<th>Nombre</th>
-									<th>Categoría</th>
-									<th>Acciones</th>
-								</tr>
-							</thead>
-							<tbody>
-								{this.state.data.map((source) => {
-									return (
-										<tr key={source._id}>
-											<td>{source.name}</td>
-											<td>{source.category.name}</td>
-											<td>
-												<button
-													className="btn btn-primary"
-													onClick={() => this.handleOpenAddEditModal(source)}
-												>
-													<FontAwesomeIcon icon={faEdit} />
-												</button>
-
-												<button
-													className="btn btn-danger ms-2"
-													onClick={() => this.handleOpenDelete(source)}
-												>
-													<FontAwesomeIcon icon={faTrashAlt} />
-												</button>
-											</td>
-										</tr>
-									);
-								})}
-							</tbody>
-						</table>
-				}
-				<Modal isOpen={this.state.addEditModal}>
-					<ModalBody>
-						<div className="form-group">
-							<label htmlFor="name">Nombre</label>
-							<input className="form-control" name="name" id="name" onChange={this.handleChange} value={form.name} />
-						</div>
-						<div className="form-group">
-							<label htmlFor="url">URL</label>
-							<input className="form-control" name="url" id="url" onChange={this.handleChange} value={form.url} />
-						</div>
-						<div className="form-group">
-							<label htmlFor="category_id">Categoría</label>
-							<select value={form.category_id} onChange={this.handleChange} name="category_id" className="form-control">
-								<option value="">Ninguna</option>
-								{
-									categories.map(category => <option key={category._id} value={category._id}>{category.name}</option>)
-								}
-							</select>
-						</div>
-					</ModalBody>
-
-					<ModalFooter>
-						<button className="btn btn-danger" onClick={this.handleCloseAddEditModal}>Cancelar</button>
-						<button
-							className={`btn btn-${sourceSelected ? 'info' : 'success'} ms-3`}
-							onClick={sourceSelected ? this.putSource : this.postSource}
-						>
-							{sourceSelected ? 'Actualizar' : 'Insertar'}
-						</button>
-					</ModalFooter>
-				</Modal>
+    gettingCategories = async () => {
+        this.setState({ isLoading: true });
+        const { data, error } = await getCategories();
+        if (!error) {
 
 
-				<Modal isOpen={this.state.modalDelate}>
-					<ModalBody>
-						Estás seguro que deseas eliminar el recurso?
-        			</ModalBody>
-					<ModalFooter>
-						<button className="btn btn-danger" onClick={this.handleDelete}>Sí</button>
-						<button className="btn btn-secondary" onClick={this.handleCloseDelete}>No</button>
-					</ModalFooter>
-				</Modal>
-			</div>
-		);
-	}
+            this.setState({ categories: data })
+        }
+        this.setState({ isLoading: false });
+    }
+
+
+    gettingSources = async () => {
+        //this.setState({ isLoading: true });
+        const { error, data } = await getSources()
+        //console.log(data);
+        if (data) {
+            this.setState({ data: data })
+        }
+        //this.setState({ isLoading: false });
+    }
+
+    postSource = async (e) => {
+        e.preventDefault();
+        this.setState({ isLoading: true });
+        this.state.form.name = e.target.name.value;
+        this.state.form.url = e.target.url.value;
+        this.state.form.category_id = e.target.category_id.value;
+        this.state.form.user_id = decodeToken()._id;
+
+        const form = await createSource(this.state.form);
+        console.log("this.state.form")
+        console.log(this.state.form)
+        if (form) {
+            await this.gettingCategories();
+            await this.gettingSources();
+            this.setState({ isLoading: false });
+            alert("Source has been added sucessfully!");
+        }
+    }
+
+    handleDelete = async (source_id, e) => {
+        this.setState({ isLoading: true });
+        console.log("delete value:" + source_id)
+
+        const { error } = await deleteSource(source_id);
+
+        if (!error) {
+            await this.gettingCategories();
+            alert("Source has been deleted sucessfully!");
+
+            //this.handleCloseDelete();
+        }
+        this.setState({ isLoading: false });
+        window.location.reload();
+    }
+
+    handleModal = () => {
+        const div = document.getElementById('modal');
+        div.style.display = div.style.display === 'none' ? 'block' : 'none';
+    }
+
+    handleOpenModal = (source, e) => {
+        this.handleModal();
+
+        document.getElementById("edit_name").value = source.name;
+        document.getElementById("edit_RSS").value = source.url;
+        //document.getElementById("edit_category").select = source.category.name;
+        this.state.form._id = source._id;
+
+    }
+
+
+    patchSource = async (e) => {
+        e.preventDefault();
+        this.state.form.name = e.target.edit_name.value;
+        this.state.form.url = e.target.edit_RSS.value;
+        this.state.form.category_id = e.target.edit_category.value;//set values to new form
+
+        console.log("this.state.form holi");        
+        console.log(this.state.form);
+       
+        
+
+        const { error } = await updateSource(this.state.form);// send data to upddate source
+        if (!error) {
+            alert("Source has been modified! sucessfully")
+            this.handleModal();
+            await this.gettingCategories();
+            await this.gettingSources();
+
+
+        }else{
+            console.log("error");  
+            console.log(error );  
+            
+        }
+        
+    }
+
+    render() {
+
+        const { categories } = this.state;//load categories into new constant
+
+
+        return (
+            <div className="flex w-full h-screen">
+
+                <div id="modal" className="modal">
+                    <div className="modal-content">
+                        <span className="close" onClick={this.handleModal}>&times;</span>
+                        <div>
+                            <form onSubmit={this.patchSource}>
+                                <div className="mb-4">
+                                    <label htmlFor="edit_name" className="block text-gray-700 font-bold mb-2">
+                                        Category Name:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="edit_name"
+                                        name="edit_name"
+                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        required
+                                    />
+                                    <label htmlFor="edit_RSS" className="block text-gray-700 font-bold mb-2">RSS:</label>
+
+
+                                    <input
+                                        type="text"
+                                        id="edit_RSS"
+                                        name="edit_RSS"
+                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        required
+                                    />
+                                    <label htmlFor="edit_category" className="block text-gray-700 font-bold mb-2">Category:</label>
+                                    <select className='w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent' required
+
+                                        name="edit_category" id="edit_category">
+
+                                        {
+                                            categories.map(category => <option key={category._id} value={category._id}>{category.name}</option>)
+                                        }
+                                    </select>
+
+                                </div>
+                                <div className="mb-4">
+                                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        Save
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+
+
+                    </div></div>
+                <div className='content-between bg-white px-10 py-20 rounded-3xl border-2 border-gray-100'>
+                    <h3 className='text-gray-500 mt-4 text-5xl font-semibold text-center'>Please add new source</h3>
+                    <div className='mt-8'>
+                        <div>
+                            <form onSubmit={this.postSource} method="POST">
+                                <label className='text-lg font-medium'>News name:</label>
+                                <input
+                                    className='w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent'
+                                    name='name' required
+                                    placeholder='Name'
+                                />
+                                <div>
+                                    <label className='text-lg font-medium'>RSS:</label>
+                                    <input
+                                        className='w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent'
+                                        name='url' required
+                                        placeholder='RSS URL'
+                                    />
+                                </div>
+                                <div>
+                                    <label className='text-lg font-medium'>Category:</label>
+                                    <div>
+                                        <select className='w-full border-2 border-gray-100 rounded-xl p-4 mt-1 bg-transparent' required
+                                            //value='{form.category_id}' 
+                                            //onChange={this.handleChange} 
+                                            name="category_id">
+                                            <option></option>
+                                            {
+                                                categories.map(category => <option key={category._id} value={category._id}>{category.name}</option>)
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className='mt-8 flex flex-col gap-y-4'>
+                                    <button className='active:scale-[.98] py-2 rounded-xl bg-violet-500 text-white text-lg font-bol'
+                                        type="submit" name='save'>Save</button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <div className="flex flex-auto">
+                    
+                    <div className='flex flex-auto content-between bg-white px-10 py-20 rounded-3xl border-2 border-gray-100 '>
+                        
+                        <h2 className='text-gray-500 mt-4 text-5xl font-semibold text-center'>Sources</h2>
+                        <div>
+                        <button className='border border-gray-400  px-4 py-2 text-center' style={{ float: "right" }} onClick={() => window.location.assign("/")}>
+                            Log out
+                        </button>
+                    </div>
+                    <div style={{ display: "block" }}>
+                        <button className='border border-gray-400  px-4 py-2 text-center' style={{ float: "right" }} onClick={() => window.location.assign("/news")}>
+                            News
+                        </button>
+                        </div>
+
+                        <div className='mt-12'>
+                            <div className="mt-12">
+                                <table className="mt-8 text-gray-500 font-semibold">
+                                    <thead>
+                                        <tr>
+                                            <th className='border border-gray-400 px-4 py-2 text-violet-500'>News Name</th>
+                                            <th className='border border-gray-400 px-4 py-2 text-violet-500'>Category</th>
+                                            <th className='border border-gray-400 px-4 py-2 text-violet-500'>Edit</th>
+                                            <th className='border border-gray-400 px-4 py-2 text-violet-500'>Delete</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {this.state.data?.map(source => {
+                                            return (
+
+                                                <tr key={source._id}>
+                                                    <td className='border border-gray-400  px-4 py-2'>{source.name}</td>
+                                                    <td className='border border-gray-400  px-4 py-2'>{source.category.name}</td>
+                                                    <td className='border border-gray-400  px-4 py-2 text-center'>
+                                                        <button className="text-violet-500" onClick={e => this.handleOpenModal(source, e)}>
+                                                            <i className="fa-solid fa-pen-to-square" id="edit_source"></i>
+                                                        </button>
+                                                    </td>
+                                                    <td className='border border-gray-400  px-4 py-2 text-center'><i className="fa-sharp fa-solid fa-trash" onClick={e => this.handleDelete(source._id, e)}></i></td>
+                                                </tr>
+
+                                            )
+                                        })}
+                                    </tbody>
+                                </table>
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        )
+    }
+
 }
+
+
 export default NewSource;

@@ -9,7 +9,7 @@ const token = urlParams.get('token');
 
 if (token) {
   localStorage.setItem('token', token);
-  window.location.href = `http://localhost:3000/`;
+  //window.location.href = `http://localhost:3000/`;
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

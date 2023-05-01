@@ -6,6 +6,8 @@ import { createSource, getSources, deleteSource, updateSource } from '../service
 import { getNewsByCategory, getNewsByUser } from '../services/newsService';
 import './modal.css';
 import { getRole } from '../services/roleService';
+import { decodeToken } from '../utils/decodeToken';
+
 
 class News extends React.Component {
     state = {
@@ -24,20 +26,13 @@ class News extends React.Component {
         sources: [],
     };
     componentDidMount() {
-        this.gettingSession();
+       
         this.gettingNews();
         this.gettingCategories();
 
 
     }
-    gettingSession = async () => {
-        this.setState({ isLoading: true });
-        const user=await getSession();
-        
-     
-        
-        this.setState({ isLoading: false });
-    }
+    
 
 
 
@@ -65,10 +60,13 @@ class News extends React.Component {
 
     gettingNews = async () => {
         this.setState({ isLoading: true });
-        const { error, data } = await getNewsByUser();//send user_id by parameter
+        const { error, data } = await getNewsByUser(decodeToken()._id);//send user_id by parameter
 
         if (data) {
+            
             this.setState({ data: data })
+        }else{
+          
         }
         this.setState({ isLoading: false });
     }
@@ -136,7 +134,7 @@ class News extends React.Component {
                         </button>
                     </div>
                     <div style={{ display: "block" }}>
-                        <button className='border border-gray-400  px-4 py-2 text-center' style={{ float: "right" }} onClick={() => window.location.assign("/newsource")}>
+                        <button className='border border-gray-400  px-4 py-2 text-center' style={{ float: "right" }} onClick={() => window.location.assign("/sources")}>
                             New Sources
                         </button>
                     </div>

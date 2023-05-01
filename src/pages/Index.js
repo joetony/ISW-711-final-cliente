@@ -41,10 +41,13 @@ class Index extends Component {
         this.setState({ isLoading: true });
      
         
-       
         const { data, error } = await getNewsByUser(decodeToken()._id);
         if (!error) {
+            
             this.setState({ notices: data })
+        }else{
+            
+
         }
         this.setState({ isLoading: false });
     }
@@ -81,7 +84,12 @@ class Index extends Component {
             tagsIds.length !== 0 ? tagsIds : undefined
         );
         if (!error) {
+            console.log("carga search");
+            console.log(data);
             this.setState({ notices: data })
+        }else{
+            console.log("no carga search");
+            console.log(data);
         }
         this.setState({ isLoading: false });
     }
@@ -100,7 +108,14 @@ class Index extends Component {
             tagsIds.length !== 0 ? tagsIds : undefined
         );
         if (!error) {
+            console.log("carga search");
+            console.log(data);
+            
             this.setState({ notices: data })
+        }else{
+            console.log("no carga search");
+            console.log(data);
+            
         }
         this.setState({ isLoading: false });
     }
@@ -210,7 +225,7 @@ class Index extends Component {
                         {
                             notices.map(notice => (
                                 <div className="col-4 mb-3" key={notice._id}>
-                                    <NewCard notice={notice} />
+                                    <NewCard news={notice} />
                                 </div>
                             ))
                         }

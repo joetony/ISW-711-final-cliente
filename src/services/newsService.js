@@ -1,16 +1,48 @@
-import axios from "axios"
+import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
+import { gql } from 'graphql-tag';
 
+const client = new ApolloClient({
+    link: createHttpLink({ uri: 'http://localhost:5000/graphql' }),
+    cache: new InMemoryCache(),
+});
+const queryGetNewsByUser = gql`
+  query getNewsByUserId($userId: String) {
+    getNewsByUserId(userId: $userId) {
+      _id
+      title
+      description
+      permanlink
+      date
+      user {
+        _id
+        email
+      }
+      category {
+        _id
+        name
+      }
+      tags {
+        _id
+        name
+      }
+    }
+  }
+`;
 
-const URLXML = 'https://feeds.feedburner.com/crhoy/wSjk';
-const URL = 'http://localhost:4000/';
-export const getNewsByUser = async (data) => {//returns News associate to one user
-
-
+export const getNewsByUser = async (userId) => {
     try {
-        const result = await axios.get(`${URL}news?user_id=${data.user_id}`, data, { headers: { 'Content-Type': 'application/json' } });
-        if (result.status === 200) {
 
-            return { error: false, data: result.data, msg: result.data.msg };
+
+        const { data } = await client.query({
+            query: queryGetNewsByUser,
+            variables: {
+                userId: userId,
+            },
+        });
+
+
+        if (data && data.getNewsByUserId) {
+            return { error: false, data: data.getNewsByUserId, msg: '' };
         }
         return { error: true, data: null, msg: 'Error interno del servidor' };
     } catch (error) {
@@ -19,47 +51,60 @@ export const getNewsByUser = async (data) => {//returns News associate to one us
         }
         console.log(error.response)
         return { error: true, data: null, msg: 'Error interno del servidor' };
+    }
+};
+
+const queryGetSearchNews = gql`
+query getSearchNews($userId: String, $search: String, $categoryId: String, $tags: [String]) {
+    getSearchNews(userId: $userId, search: $search, categoryId: $categoryId, tags: $tags) {
+        _id
+        title
+        description
+        permanlink
+        date
+        user {
+            _id
+            email
+        }
+        category {
+            _id
+            name
+        }
+        tags {
+            _id
+            name
+        }
     }
 }
+`;
 
-export const getNewsByCategory = async (data) => {//returns New filter by category
-
-
+export const getSearchNews = async (userId, search, categoryId, tags) => {
     try {
-        const result = await axios.get(`${URL}news?user_id=${data.user_id}&category_id=${data.category_id}`, data, { headers: { 'Content-Type': 'application/json' } });
-        if (result.status === 200) {
-
-            return { error: false, data: result.data, msg: result.data.msg };
+        console.log("userId");
+        console.log(userId);
+        console.log(search);
+        console.log(categoryId);
+        console.log(tags);
+        const { data } = await client.query({
+            query: queryGetSearchNews,
+            variables: {
+                userId: userId,
+                search: search,
+                categoryId: categoryId,
+                tags: tags
+            },
+        });
+        console.log("data.getSearchNews");
+        console.log(data.getSearchNews);
+        if (data && data.getSearchNews) {
+            return { error: false, data: data.getSearchNews, msg: '' };
         }
         return { error: true, data: null, msg: 'Error interno del servidor' };
     } catch (error) {
         if (error && error.response && error.response.data && error.response.data.msg) {
             return { error: true, data: null, msg: error.response.data.msg };
         }
-        console.log(error.response)
+        console.log(error.response);
         return { error: true, data: null, msg: 'Error interno del servidor' };
     }
-}
-
-export const getNewsXML = async () => {//returns New filter by category
-
-    try {
-        const result = await axios.get(URLXML);
-        if (result.status === 200) {
-
-            return { error: false, data: result.data, msg: result.data.msg };
-        }
-        return { error: true, data: null, msg: 'Error interno del servidor' };
-    } catch (error) {
-        if (error && error.response && error.response.data && error.response.data.msg) {
-            return { error: true, data: null, msg: error.response.data.msg };
-        }
-        console.log(error.response)
-        return { error: true, data: null, msg: 'Error interno del servidor' };
-    }
-
-
-    
-
-
 }

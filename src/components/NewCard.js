@@ -5,9 +5,13 @@ import React, { Component } from 'react';
 export default class NewCard extends Component {
     render() {
         const { news } = this.props;
+      
+        if (!news) {
+            return null;
+        }
         const date = moment(news.date, 'x').utc().format('DD/MM/YYYY hh:mm a')
         return (
-            <a href={news.permalink} target="_blank" rel="noreferrer" className="text-decoration-none text-dark" >
+            <a href={news.permanlink} target="_blank" rel="noreferrer" className="text-decoration-none text-dark" >
                 <div className="card">
                     <div className="card-header">
                         <p className="m-0">{date}</p>
